@@ -6,13 +6,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import java.awt.BorderLayout;
+import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
+import javax.swing.border.EmptyBorder;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.event.MenuListener;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -20,6 +23,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import kpu.bigdata.st.type.STObject;
 import kpu.bigdata.st.type.utils;
 
+import javax.swing.event.MenuEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
@@ -31,7 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
-
+import javax.swing.JSpinner;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.event.WindowAdapter;
@@ -45,7 +49,7 @@ public class LiveStream extends JFrame {
 	private JPanel fg;
 	private int c_w[] = {-203, -170}; // 1264
 	private int c_h[] = {-117, -91}; // 563
-	private LinkedList<FileStreamer> fileStreamers;
+	private FileStreamer fs;
 	private LinkedList<STObject> objects;
 	private LinkedList<STObject> alerts;
 	public LiveStream() {
@@ -54,12 +58,8 @@ public class LiveStream extends JFrame {
 		
 		objects = new LinkedList<>();
 		alerts = new LinkedList<>();
-		objects.add(STObject.getFromString("ST_OBJECT<name:o1> ((PERIOD (2019-11-06 18:53:07 ~ 2019-11-06 18:54:17), POLYGON ((-196.83987209316118 -111.99043011955311, -191.7230378225612 -111.99043011955311, -191.7230378225612 -106.98771796745513, -196.83987209316118 -106.98771796745513, -196.83987209316118 -111.99043011955311))))"));
-		objects.add(STObject.getFromString("ST_OBJECT<name:o2> ((PERIOD (2019-11-06 18:53:07 ~ 2019-11-06 18:54:17), POLYGON ((-194.3849853309394 -111.67608287564249, -189.22973350803835 -111.67608287564249, -189.22973350803835 -104.23739790178081, -194.3849853309394 -104.23739790178081, -194.3849853309394 -111.67608287564249))))"));
-		objects.add(STObject.getFromString("ST_OBJECT<name:o3> ((PERIOD (2019-11-06 18:53:07 ~ 2019-11-06 18:54:17), POLYGON ((-183.96062569179404 -110.02258261311228, -173.49541839024292 -110.02258261311228, -173.49541839024292 -100.10376571589654, -183.96062569179404 -100.10376571589654, -183.96062569179404 -110.02258261311228))))"));
-		objects.add(STObject.getFromString("ST_OBJECT<name:o4> ((PERIOD (2019-11-06 18:53:07 ~ 2019-11-06 18:54:17), POLYGON ((-181.10353372160412 -108.08461056093486, -175.91330172958138 -108.08461056093486, -175.91330172958138 -102.91667282728193, -181.10353372160412 -102.91667282728193, -181.10353372160412 -108.08461056093486))))"));
 		
-		fileStreamers = new LinkedList<>();
+		fs = new FileStreamer(this);
 		
 		bg = new JPanel(){
 			@Override
@@ -83,6 +83,7 @@ public class LiveStream extends JFrame {
 					if(geom == null){
 						continue;
 					}
+					System.out.println(b.getName());
 					
 					int x[] = new int[geom.getCoordinates().length];
 					int y[] = new int[geom.getCoordinates().length];
@@ -261,8 +262,7 @@ public class LiveStream extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				for(FileStreamer fs : fileStreamers)
-					fs.destroy();
+				fs.destroy();
 			}
 		});
 		
@@ -301,18 +301,14 @@ public class LiveStream extends JFrame {
 		if(fd.getFile() == null){
 			return;
 		}
-		FileStreamer fs = new FileStreamer(this);
 		fs.openFile(fd.getDirectory()+fd.getFile());
 		writeLog("File \""+fd.getFile()+"\" Loaded");
-		fileStreamers.add(fs);
 	}
 
 	public void startStream(){
-		for(FileStreamer fs : fileStreamers)
-			fs.startStream();
+		fs.startStream();
 	}
 	public void pauseStream(){
-		for(FileStreamer fs : fileStreamers)
-			fs.pauseStream();
+		fs.pauseStream();
 	}
 }
