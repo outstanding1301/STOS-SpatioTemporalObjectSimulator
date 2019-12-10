@@ -25,6 +25,7 @@ public class FileStreamer {
 		boolean running;
 		LiveStream app;
 		STObject appObj;
+		
 		public FileStreamThread(LiveStream app) {
 			this.running = false;
 			this.res = null;

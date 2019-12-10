@@ -21,7 +21,7 @@ public class App extends JFrame {
 	public static int c_w[] = {-350, 100}; // 1264
 	public static int c_h[] = {-400, 150}; // 563
 	public App() {
-		setTitle("STJTSV");
+		setTitle("STOS");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 192, 257);
 		contentPane = new JPanel();
@@ -70,7 +70,7 @@ public class App extends JFrame {
 		btnOperation.setBounds(12, 43, 162, 23);
 		contentPane.add(btnOperation);
 
-		txtrLiveStream.setFont(new Font("�������", Font.PLAIN, 11));
+		//txtrLiveStream.setFont(new Font("�������", Font.PLAIN, 11));
 		txtrLiveStream.setBounds(12, 76, 162, 132);
 		contentPane.add(txtrLiveStream);
 		
